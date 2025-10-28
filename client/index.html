@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeCore - Gestor de Proyectos</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+      min-height: 100vh;
+      color: #e0e0e0;
+      overflow-x: hidden;
+    }
+
+    /* Loading Screen */
+    .fullscreen-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fullscreen-loading.hidden {
+      animation: fadeOut 0.5s ease forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    .loading-logo {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #65ffa5 0%, #4ecdc4 100%);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      animation: logoFloat 3s ease-in-out infinite;
+      box-shadow: 0 20px 60px rgba(101, 255, 165, 0.4);
+      position: relative;
+    }
+
+    .loading-logo::before {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      background: linear-gradient(135deg, #65ffa5, #4ecdc4, #65ffa5);
+      border-radius: 35px;
+      z-index: -1;
+      opacity: 0.5;
+      filter: blur(20px);
+      animation: glow 2s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-20px) rotate(5deg); }
+      50% { transform: translateY(0) rotate(0deg); }
+      75% { transform: translateY(-10px) rotate(-5deg); }
+    }
+
+    @keyframes glow {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.1); }
+    }
+
+    .loading-logo svg {
+      width: 60px;
+      height: 60px;
+      animation: rotate3d 4s linear infinite;
+    }
+
+    @keyframes rotate3d {
+      0% { transform: rotateY(0deg) rotateX(0deg); }
+      50% { transform: rotateY(180deg) rotateX(10deg); }
+      100% { transform: rotateY(360deg) rotateX(0deg); }
+    }
+
+    .loading-text {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #65ffa5 0%, #4ecdc4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .loading-dots {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .loading-dot {
+      width: 12px;
+      height: 12px;
+      background: linear-gradient(135deg, #65ffa5 0%, #4ecdc4 100%);
+      border-radius: 50%;
+      animation: bounce 1.4s ease-in-out infinite;
+    }
+
+    .loading-dot:nth-child(1) { animation-delay: 0s; }
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.8) translateY(0); opacity: 0.5; }
+      40% { transform: scale(1.2) translateY(-20px); opacity: 1; }
+    }
+
+    /* Header */
+    .header {
+      background: rgba(13, 17, 23, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #65ffa5 0%, #4ecdc4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #65ffa5 0%, #4ecdc4 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(101, 255, 165, 0.7); }
+      50% { transform: scale(1.05); box-shadow: 0 0 20px 5px rgba(101, 255, 165, 0); }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-header {
+      background: rgba(101, 255, 165, 0.1);
+      color: #65ffa5;
+      padding: 0.7rem 1.2rem;
+      border: 2px solid rgba(101, 255, 165, 0.3);
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .btn-header:hover {
+      background: rgba(101, 255, 165, 0.2);
+      border-color: #65ffa5;
+      transform: translateY(-2px);
+    }
+
+    .btn-create {
+      background: linear-gradient(135deg, #65ffa5 0%, #4ecdc4 100%);
+      color: #0D1117;
+      border: none;
+    }
+
+    .btn-create:hover {
+      box-shadow: 0 5px 20px rgba(101, 255, 165, 0.4);
+    }
+
+    .btn-refresh {
+      background: rgba(78, 205, 196, 0.1);
+      color: #4ecdc4;
+      border-color: rgba(78, 205, 196, 0.3);
+    }
+
+    .btn-refresh:hover {
+      background: rgba(78, 205, 196, 0.2);
+      border-color: #4ecdc4;
+    }
+
+    .btn-refresh svg {
+      animation: none;
+    }
+
+    .btn-refresh.refreshing svg {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .main {
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    /* Carrusel */
+    .carousel-container {
+      position: relative;
+      margin-bottom: 3rem;
+    }
+
+    .carousel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .carousel-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .carousel-controls {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .carousel-btn {
+      width: 45px;
+      height: 45px;
+      background: rgba(101, 255, 165, 0.1);
+      border: 2px solid rgba(101, 255, 165, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #65ffa5;
+    }
+
+    .carousel-btn:hover {
+      background: rgba(101, 255, 165, 0.2);
+      border-color: #65ffa5;
+      transform: scale(1.1);
+    }
+
+    .carousel-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .carousel-btn:disabled:hover {
+      transform: scale(1);
+    }
+
+    .carousel-wrapper {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .carousel-track {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1.5rem;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .repo {
+      background: linear-gradient(145deg, rgba(13, 17, 23, 0.9), rgba(33, 40, 48, 0.9));
+      padding: 1.8rem;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .repo::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #65ffa5, #4ecdc4);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .repo:hover {
+      border-color: #65ffa5;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 40px rgba(101, 255, 165, 0.2);
+    }
+
+    .repo:hover::before {
+      transform: scaleX(1);
+    }
+
+    .repo.favorite {
+      border-color: #ffd700;
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .project-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      flex: 1;
+    }
+
+    .favorite-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      transition: all 0.2s ease;
+      padding: 0.2rem;
+    }
+
+    .favorite-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .tech-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      flex: 1;
+    }
+
+    .tech-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border: 2px solid;
+      transition: all 0.2s ease;
+    }
+
+    .project-info {
+      margin: 0.5rem 0;
+      padding: 0.8rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: #a0a0a0;
+    }
+
+    .ruta {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0.3rem;
+      border-radius: 6px;
+    }
+
+    .ruta:hover {
+      background: rgba(101, 255, 165, 0.1);
+      color: #65ffa5;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem;
+      margin-top: auto;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.6rem 0.8rem;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: rgba(33, 40, 48, 0.6);
+      color: #e0e0e0;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-vscode {
+      border-color: #007ACC;
+      background: linear-gradient(135deg, rgba(0, 122, 204, 0.2), rgba(0, 122, 204, 0.1));
+    }
+
+    .btn-vscode:hover {
+      border-color: #007ACC;
+      box-shadow: 0 5px 20px rgba(0, 122, 204, 0.4);
+    }
+
+    .btn-cursor {
+      border-color: #9333ea;
+      background: linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(147, 51, 234, 0.1));
+    }
+
+    .btn-cursor:hover {
+      border-color: #9333ea;
+      box-shadow: 0 5px 20px rgba(147, 51, 234, 0.4);
+    }
+
+    .btn-zip {
+      border-color: #65ffa5;
+      background: linear-gradient(135deg, rgba(101, 255, 165, 0.2), rgba(78, 205, 196, 0.1));
+    }
+
+    .btn-zip:hover {
+      border-color: #65ffa5;
+      box-shadow: 0 5px 20px rgba(101, 255, 165, 0.3);
+    }
+
+    .btn-folder {
+      border-color: #ffd700;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+    }
+
+    .btn-folder:hover {
+      border-color: #ffd700;
+      box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+    }
+
+    .btn-delete {
+      border-color: #ff5555;
+      background: linear-gradient(135deg, rgba(255, 85, 85, 0.2), rgba(255, 85, 85, 0.1));
+      grid-column: 1 / -1;
+    }
+
+    .btn-delete:hover {
+      border-color: #ff5555;
+      box-shadow: 0 5px 20px rgba(255, 85, 85, 0.4);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: linear-gradient(145deg, rgba(13, 17, 23, 0.95), rgba(33, 40, 48, 0.95));
+      padding: 2.5rem;
+      border-radius: 20px;
+      border: 2px solid rgba(101, 255, 165, 0.3);
+      max-width: 600px;
+      width: 90%;
+      animation: slideUp 0.3s ease;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #65ffa5 0%, #4ecdc4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      color: #a0a0a0;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-close:hover {
+      color: #ff5555;
+      transform: rotate(90deg);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #a0a0a0;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 0.9rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #65ffa5;
+      box-shadow: 0 0 15px rgba(101, 255, 165, 0.2);
+    }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .template-option {
+      padding: 1.2rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .template-option:hover {
+      border-color: #65ffa5;
+      background: rgba(101, 255, 165, 0.1);
+    }
+
+    .template-option.selected {
+      border-color: #65ffa5;
+      background: rgba(101, 255, 165, 0.2);
+      box-shadow: 0 0 20px rgba(101, 255, 165, 0.3);
+    }
+
+    .template-option .icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .template-option .name {
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .template-option .desc {
+      font-size: 0.8rem;
+      color: #a0a0a0;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #65ffa5 0%, #4ecdc4 100%);
+      color: #0D1117;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(101, 255, 165, 0.4);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .search-results {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .search-result-item {
+      padding: 0.8rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+
+    .search-result-item:hover {
+      background: rgba(101, 255, 165, 0.1);
+      border-color: #65ffa5;
+    }
+
+    .notification {
+      position: fixed;
+      top: 100px;
+      right: 2rem;
+      background: linear-gradient(135deg, #65ffa5 0%, #4ecdc4 100%);
+      color: #0D1117;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      animation: slideInRight 0.3s ease;
+      z-index: 2000;
+      display: none;
+    }
+
+    .notification.active {
+      display: block;
+    }
+
+    .notification.error {
+      background: linear-gradient(135deg, #ff5555 0%, #ff3333 100%);
+      color: white;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #a0a0a0;
+      grid-column: 1 / -1;
+    }
+
+    /* Modal de confirmación */
+    .confirm-modal {
+      padding: 2rem;
+      max-width: 400px;
+    }
+
+    .confirm-text {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      color: #e0e0e0;
+      text-align: center;
+    }
+
+    .confirm-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .btn-confirm {
+      padding: 0.8rem;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-confirm-yes {
+      background: linear-gradient(135deg, #ff5555 0%, #ff3333 100%);
+      color: white;
+    }
+
+    .btn-confirm-yes:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(255, 85, 85, 0.4);
+    }
+
+    .btn-confirm-no {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e0e0e0;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-confirm-no:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 1200px) {
+      .carousel-track {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .carousel-track {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .header {
+        padding: 1rem 1.5rem;
+      }
+
+      .header-actions {
+        flex-wrap: wrap;
+      }
+
+      .template-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .carousel-track {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loading Screen -->
+  <div class="fullscreen-loading" id="fullscreenLoading">
+    <div class="loading-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="loading-text">CodeCore</div>
+    <div class="loading-dots">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h1>CodeCore</h1>
+      </div>
+      <div class="header-actions">
+        <button class="btn-header btn-refresh" onclick="refreshProjects()" id="refreshBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+          Actualizar
+        </button>
+        <button class="btn-header" onclick="openSearchModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          </svg>
+          Buscar Carpetas
+        </button>
+        <button class="btn-header" onclick="openFolderModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10zm-8-4h2v2h2v-2h2v-2h-2v-2h-2v2h-2v2z"/>
+          </svg>
+          Crear Carpeta
+        </button>
+        <button class="btn-header" onclick="openCloneModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          Clonar Repo
+        </button>
+        <button class="btn-header btn-create" onclick="openProjectModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+          Nuevo Proyecto
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <!-- Carrusel de Proyectos -->
+    <div class="carousel-container">
+      <div class="carousel-header">
+        <h2 class="carousel-title">Mis Proyectos <span id="project-count">(0)</span></h2>
+        <div class="carousel-controls">
+          <button class="carousel-btn" id="prevBtn" onclick="prevPage()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+          </button>
+          <button class="carousel-btn" id="nextBtn" onclick="nextPage()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="carousel-track" id="carouselTrack"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Crear Proyecto -->
+  <div class="modal" id="projectModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Nuevo Proyecto</h2>
+        <button class="btn-close" onclick="closeModal('projectModal')">×</button>
+      </div>
+      <form id="projectForm" onsubmit="createProject(event)">
+        <div class="form-group">
+          <label>Nombre del proyecto</label>
+          <input type="text" id="projectName" placeholder="mi-proyecto-increible" required />
+        </div>
+        <div class="form-group">
+          <label>Plantilla</label>
+          <div class="template-grid">
+            <div class="template-option selected" data-template="folder" data-modal="project">
+              <div class="icon">📁</div>
+              <div class="name">Solo Carpeta</div>
+              <div class="desc">Carpeta vacía</div>
+            </div>
+            <div class="template-option" data-template="empty" data-modal="project">
+              <div class="icon">📝</div>
+              <div class="name">Con README</div>
+              <div class="desc">Carpeta con README</div>
+            </div>
+            <div class="template-option" data-template="html" data-modal="project">
+              <div class="icon">🌐</div>
+              <div class="name">HTML/CSS/JS</div>
+              <div class="desc">Sitio web estático</div>
+            </div>
+            <div class="template-option" data-template="node" data-modal="project">
+              <div class="icon">📦</div>
+              <div class="name">Node.js</div>
+              <div class="desc">Proyecto Node básico</div>
+            </div>
+            <div class="template-option" data-template="express" data-modal="project">
+              <div class="icon">🚂</div>
+              <div class="name">Express</div>
+              <div class="desc">Servidor Express</div>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">Crear Proyecto</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Crear Carpeta -->
+  <div class="modal" id="folderModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Crear Carpeta</h2>
+        <button class="btn-close" onclick="closeModal('folderModal')">×</button>
+      </div>
+      <form id="folderForm" onsubmit="createFolder(event)">
+        <div class="form-group">
+          <label>Nombre de la carpeta</label>
+          <input type="text" id="folderName" placeholder="mi-carpeta" required />
+        </div>
+        <button type="submit" class="btn-submit">Crear Carpeta</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Clonar Repositorio -->
+  <div class="modal" id="cloneModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Clonar Repositorio Git</h2>
+        <button class="btn-close" onclick="closeModal('cloneModal')">×</button>
+      </div>
+      <form id="cloneForm" onsubmit="cloneRepo(event)">
+        <div class="form-group">
+          <label>URL del repositorio</label>
+          <input type="url" id="repoUrl" placeholder="https://github.com/usuario/repo.git" required />
+        </div>
+        <div class="form-group">
+          <label>Nombre (opcional)</label>
+          <input type="text" id="repoName" placeholder="Se usará el nombre del repo" />
+        </div>
+        <button type="submit" class="btn-submit">Clonar Repositorio</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Buscar Carpetas -->
+  <div class="modal" id="searchModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Buscar Carpetas en el Dispositivo</h2>
+        <button class="btn-close" onclick="closeModal('searchModal')">×</button>
+      </div>
+      <div class="form-group">
+        <label>Nombre de la carpeta</label>
+        <input type="text" id="searchQuery" placeholder="Buscar..." oninput="searchFolders()" />
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <!-- Modal Confirmar Eliminación -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-content confirm-modal">
+      <div class="modal-header">
+        <h2>⚠️ Confirmar Eliminación</h2>
+        <button class="btn-close" onclick="closeModal('confirmModal')">×</button>
+      </div>
+      <p class="confirm-text">¿Estás seguro de que quieres eliminar este proyecto? Esta acción no se puede deshacer.</p>
+      <div class="confirm-actions">
+        <button class="btn-confirm btn-confirm-no" onclick="closeModal('confirmModal')">Cancelar</button>
+        <button class="btn-confirm btn-confirm-yes" onclick="confirmDelete()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notificación -->
+  <div class="notification" id="notification"></div>
+
+  <script>
+    let allProjects = [];
+    let currentPage = 0;
+    const itemsPerPage = 6;
+    let selectedTemplate = 'folder';
+    let projectToDelete = null;
+
+    // Template selection
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.template-option')) {
+        const option = e.target.closest('.template-option');
+        const modal = option.dataset.modal;
+        document.querySelectorAll(`[data-modal="${modal}"]`).forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+        selectedTemplate = option.dataset.template;
+      }
+    });
+
+    function openProjectModal() {
+      document.getElementById('projectModal').classList.add('active');
+      document.getElementById('projectName').focus();
+    }
+
+    function openFolderModal() {
+      document.getElementById('folderModal').classList.add('active');
+      document.getElementById('folderName').focus();
+    }
+
+    function openCloneModal() {
+      document.getElementById('cloneModal').classList.add('active');
+      document.getElementById('repoUrl').focus();
+    }
+
+    function openSearchModal() {
+      document.getElementById('searchModal').classList.add('active');
+      document.getElementById('searchQuery').focus();
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+      if (modalId === 'projectModal') {
+        document.getElementById('projectForm').reset();
+      } else if (modalId === 'folderModal') {
+        document.getElementById('folderForm').reset();
+      } else if (modalId === 'cloneModal') {
+        document.getElementById('cloneForm').reset();
+      } else if (modalId === 'searchModal') {
+        document.getElementById('searchResults').innerHTML = '';
+      } else if (modalId === 'confirmModal') {
+        projectToDelete = null;
+      }
+    }
+
+    function showNotification(message, isError = false) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.classList.add('active');
+      if (isError) {
+        notification.classList.add('error');
+      } else {
+        notification.classList.remove('error');
+      }
+      setTimeout(() => {
+        notification.classList.remove('active');
+        setTimeout(() => notification.classList.remove('error'), 300);
+      }, 3000);
+    }
+
+    function hideFullscreenLoading() {
+      const loading = document.getElementById('fullscreenLoading');
+      loading.classList.add('hidden');
+      setTimeout(() => loading.style.display = 'none', 500);
+    }
+
+    async function refreshProjects() {
+      const btn = document.getElementById('refreshBtn');
+      btn.classList.add('refreshing');
+      btn.disabled = true;
+      
+      await loadProjects();
+      
+      setTimeout(() => {
+        btn.classList.remove('refreshing');
+        btn.disabled = false;
+      }, 500);
+      
+      showNotification('✅ Lista actualizada');
+    }
+
+    async function toggleFavorite(path) {
+      try {
+        const res = await fetch('http://localhost:8080/api/toggle-favorite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          await loadProjects();
+          showNotification(data.favorite ? '⭐ Añadido a favoritos' : '❌ Eliminado de favoritos');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    function openDeleteModal(path, name) {
+      projectToDelete = { path, name };
+      document.getElementById('confirmModal').classList.add('active');
+    }
+
+    async function confirmDelete() {
+      if (!projectToDelete) return;
+
+      try {
+        const res = await fetch('http://localhost:8080/api/delete-project', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: projectToDelete.path })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          showNotification('🗑️ Proyecto eliminado exitosamente');
+          closeModal('confirmModal');
+          await loadProjects();
+        } else {
+          showNotification('❌ ' + data.error, true);
+        }
+      } catch (error) {
+        showNotification('❌ Error al eliminar proyecto', true);
+      }
+    }
+
+    async function createProject(event) {
+      event.preventDefault();
+      const name = document.getElementById('projectName').value;
+      const submitBtn = event.target.querySelector('.btn-submit');
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creando...';
+
+      try {
+        const res = await fetch('http://localhost:8080/api/create-project', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, template: selectedTemplate })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          showNotification('✅ Proyecto creado exitosamente');
+          closeModal('projectModal');
+          await loadProjects();
+        } else {
+          showNotification('❌ ' + data.error, true);
+        }
+      } catch (error) {
+        showNotification('❌ Error al crear proyecto', true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Crear Proyecto';
+      }
+    }
+
+    async function createFolder(event) {
+      event.preventDefault();
+      const name = document.getElementById('folderName').value;
+      const submitBtn = event.target.querySelector('.btn-submit');
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creando...';
+
+      try {
+        const res = await fetch('http://localhost:8080/api/create-folder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          showNotification('✅ Carpeta creada exitosamente');
+          closeModal('folderModal');
+          await loadProjects();
+        } else {
+          showNotification('❌ ' + data.error, true);
+        }
+      } catch (error) {
+        showNotification('❌ Error al crear carpeta', true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Crear Carpeta';
+      }
+    }
+
+    async function cloneRepo(event) {
+      event.preventDefault();
+      const url = document.getElementById('repoUrl').value;
+      const name = document.getElementById('repoName').value;
+      const submitBtn = event.target.querySelector('.btn-submit');
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Clonando...';
+
+      try {
+        const res = await fetch('http://localhost:8080/api/clone-repo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, name })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          showNotification('✅ Repositorio clonado exitosamente');
+          closeModal('cloneModal');
+          await loadProjects();
+        } else {
+          showNotification('❌ ' + data.error, true);
+        }
+      } catch (error) {
+        showNotification('❌ Error al clonar repositorio', true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Clonar Repositorio';
+      }
+    }
+
+    let searchTimeout;
+    async function searchFolders() {
+      clearTimeout(searchTimeout);
+      const query = document.getElementById('searchQuery').value;
+      
+      if (query.length < 2) {
+        document.getElementById('searchResults').innerHTML = '<p style="color: #a0a0a0; padding: 1rem;">Escribe al menos 2 caracteres...</p>';
+        return;
+      }
+
+      searchTimeout = setTimeout(async () => {
+        document.getElementById('searchResults').innerHTML = '<p style="color: #a0a0a0; padding: 1rem;">Buscando...</p>';
+        
+        try {
+          const res = await fetch('http://localhost:8080/api/search-folders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+          });
+
+          const data = await res.json();
+          const resultsDiv = document.getElementById('searchResults');
+          
+          if (data.results && data.results.length > 0) {
+            resultsDiv.innerHTML = data.results.map(path => `
+              <div class="search-result-item" onclick="openPath('${path.replace(/\\/g, '\\\\')}')">${path}</div>
+            `).join('');
+          } else {
+            resultsDiv.innerHTML = '<p style="color: #a0a0a0; padding: 1rem;">No se encontraron resultados</p>';
+          }
+        } catch (error) {
+          document.getElementById('searchResults').innerHTML = '<p style="color: #ff5555; padding: 1rem;">Error en la búsqueda</p>';
+        }
+      }, 500);
+    }
+
+    async function openPath(path) {
+      await fetch(`http://localhost:8080/api/open?path=${encodeURIComponent(path)}`);
+      showNotification('📁 Abriendo carpeta...');
+    }
+
+    async function loadProjects() {
+      try {
+        const res = await fetch("http://localhost:8080/api/projects");
+        const data = await res.json();
+        allProjects = data;
+        
+        hideFullscreenLoading();
+        document.getElementById('project-count').textContent = `(${data.length})`;
+        
+        currentPage = 0;
+        renderCarousel();
+      } catch (error) {
+        hideFullscreenLoading();
+        showNotification('❌ Error al cargar proyectos', true);
+      }
+    }
+
+    function renderCarousel() {
+      const track = document.getElementById('carouselTrack');
+      const totalPages = Math.ceil(allProjects.length / itemsPerPage);
+      const start = currentPage * itemsPerPage;
+      const end = start + itemsPerPage;
+      const projectsToShow = allProjects.slice(start, end);
+
+      if (projectsToShow.length === 0) {
+        track.innerHTML = '<div class="empty-state"><h2>No hay proyectos</h2><p>Crea tu primer proyecto</p></div>';
+        return;
+      }
+
+      track.innerHTML = projectsToShow.map(repo => {
+        const techBadgesHTML = repo.technologies.map(tech => `
+          <span class="tech-badge" style="background-color: ${tech.color}15; border-color: ${tech.color}; color: ${tech.color};">
+            <span>${tech.icon}</span>
+            <span>${tech.name}</span>
+          </span>
+        `).join('');
+
+        return `
+          <div class="repo ${repo.favorite ? 'favorite' : ''}">
+            <div class="project-header">
+              <h2>${repo.name}</h2>
+              <button class="favorite-btn" onclick="toggleFavorite('${repo.path.replace(/\\/g, '\\\\')}')">
+                ${repo.favorite ? '⭐' : '☆'}
+              </button>
+            </div>
+            <div class="tech-badges">${techBadgesHTML}</div>
+            <div class="project-info">
+              <div class="ruta" onclick="openPath('${repo.path.replace(/\\/g, '\\\\')}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h6l2 2h8q.825 0 1.413.588T22 8v10q0 .825-.587 1.413T20 20z"/>
+                </svg>
+                <span>git/${repo.name}</span>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-vscode" onclick="openEditor('${repo.path.replace(/\\/g, '\\\\')}', 'vscode')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16.85 2.23L7.55 11.53L3.45 8.05L1 9.95l6.55 6.55 11.3-11.3-1.9-1.9z"/>
+                </svg>
+                VSCode
+              </button>
+              <button class="btn btn-cursor" onclick="openEditor('${repo.path.replace(/\\/g, '\\\\')}', 'cursor')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 3v18l7-3 4 3 7-3V0l-7 3-4-3-7 3z"/>
+                </svg>
+                Cursor
+              </button>
+              <button class="btn btn-folder" onclick="openPath('${repo.path.replace(/\\/g, '\\\\')}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
+                </svg>
+                Abrir
+              </button>
+              <button class="btn btn-zip" onclick="downloadZip('${repo.path.replace(/\\/g, '\\\\')}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11z"/>
+                </svg>
+                ZIP
+              </button>
+              <button class="btn btn-delete" onclick="openDeleteModal('${repo.path.replace(/\\/g, '\\\\')}', '${repo.name}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+                Eliminar Proyecto
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Update buttons
+      document.getElementById('prevBtn').disabled = currentPage === 0;
+      document.getElementById('nextBtn').disabled = currentPage >= totalPages - 1;
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        currentPage--;
+        renderCarousel();
+      }
+    }
+
+    function nextPage() {
+      const totalPages = Math.ceil(allProjects.length / itemsPerPage);
+      if (currentPage < totalPages - 1) {
+        currentPage++;
+        renderCarousel();
+      }
+    }
+
+    async function openEditor(path, editor) {
+      await fetch(`http://localhost:8080/api/open-editor?path=${encodeURIComponent(path)}&editor=${editor}`);
+    }
+
+    function downloadZip(path) {
+      const url = `http://localhost:8080/api/zip?path=${encodeURIComponent(path)}`;
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "";
+      a.click();
+    }
+
+    // Close modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+      }
+    });
+
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    });
+
+    loadProjects();
+  </script>
+</body>
+
+</html>
