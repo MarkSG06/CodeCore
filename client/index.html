@@ -73,27 +73,58 @@
     }
 
     @keyframes logoFloat {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      25% { transform: translateY(-20px) rotate(5deg); }
-      50% { transform: translateY(0) rotate(0deg); }
-      75% { transform: translateY(-10px) rotate(-5deg); }
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      25% {
+        transform: translateY(-20px) rotate(5deg);
+      }
+
+      50% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      75% {
+        transform: translateY(-10px) rotate(-5deg);
+      }
     }
 
     @keyframes glow {
-      0%, 100% { opacity: 0.5; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.1); }
+
+      0%,
+      100% {
+        opacity: 0.5;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+      }
     }
 
     .loading-logo svg {
       width: 60px;
       height: 60px;
+      border-radius: 2rem;
       animation: rotate3d 4s linear infinite;
     }
 
     @keyframes rotate3d {
-      0% { transform: rotateY(0deg) rotateX(0deg); }
-      50% { transform: rotateY(180deg) rotateX(10deg); }
-      100% { transform: rotateY(360deg) rotateX(0deg); }
+      0% {
+        transform: rotateY(0deg) rotateX(0deg);
+      }
+
+      50% {
+        transform: rotateY(180deg) rotateX(10deg);
+      }
+
+      100% {
+        transform: rotateY(360deg) rotateX(0deg);
+      }
     }
 
     .loading-text {
@@ -119,13 +150,31 @@
       animation: bounce 1.4s ease-in-out infinite;
     }
 
-    .loading-dot:nth-child(1) { animation-delay: 0s; }
-    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
-    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+    .loading-dot:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .loading-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loading-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
 
     @keyframes bounce {
-      0%, 80%, 100% { transform: scale(0.8) translateY(0); opacity: 0.5; }
-      40% { transform: scale(1.2) translateY(-20px); opacity: 1; }
+
+      0%,
+      80%,
+      100% {
+        transform: scale(0.8) translateY(0);
+        opacity: 0.5;
+      }
+
+      40% {
+        transform: scale(1.2) translateY(-20px);
+        opacity: 1;
+      }
     }
 
     /* Header */
@@ -167,16 +216,24 @@
       width: 40px;
       height: 40px;
       background: linear-gradient(135deg, #65ffa5 0%, #4ecdc4 100%);
-      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       animation: pulse 2s ease-in-out infinite;
     }
-
+    
     @keyframes pulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(101, 255, 165, 0.7); }
-      50% { transform: scale(1.05); box-shadow: 0 0 20px 5px rgba(101, 255, 165, 0); }
+
+      0%,
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(101, 255, 165, 0.7);
+      }
+
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px 5px rgba(101, 255, 165, 0);
+      }
     }
 
     .header-actions {
@@ -237,8 +294,13 @@
     }
 
     @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .main {
@@ -523,8 +585,13 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     .modal-content {
@@ -541,8 +608,15 @@
     }
 
     @keyframes slideUp {
-      from { transform: translateY(50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
 
     .modal-header {
@@ -585,7 +659,8 @@
       font-weight: 500;
     }
 
-    .form-group input, .form-group textarea {
+    .form-group input,
+    .form-group textarea {
       width: 100%;
       padding: 0.9rem;
       background: rgba(0, 0, 0, 0.3);
@@ -597,7 +672,8 @@
       font-family: inherit;
     }
 
-    .form-group input:focus, .form-group textarea:focus {
+    .form-group input:focus,
+    .form-group textarea:focus {
       outline: none;
       border-color: #65ffa5;
       box-shadow: 0 0 15px rgba(101, 255, 165, 0.2);
@@ -720,8 +796,15 @@
     }
 
     @keyframes slideInRight {
-      from { transform: translateX(400px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
     .empty-state {
@@ -815,8 +898,19 @@
   <!-- Loading Screen -->
   <div class="fullscreen-loading" id="fullscreenLoading">
     <div class="loading-logo">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      <svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="1024.000000pt" height="1024.000000pt"
+        viewBox="0 0 1024.000000 1024.000000" preserveAspectRatio="xMidYMid meet">
+
+        <g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+          <path
+            d="M0 5120 l0 -5120 5120 0 5120 0 0 5120 0 5120 -5120 0 -5120 0 0 -5120z m4470 1433 l145 -142 83 19 c212 47 565 52 792 12 64 -12 123 -24 131 -27 12 -4 240 221 820 805 l804 812 13 -44 c45 -157 131 -613 171 -913 87 -644 92 -1276 16 -1895 -25 -203 -14 -193 -103 -87 -42 51 -117 136 -166 190 l-89 99 12 141 c30 353 24 897 -14 1247 -17 149 -64 462 -71 470 -3 2 -231 -222 -508 -499 l-503 -503 116 -98 c64 -54 185 -164 270 -246 259 -250 468 -481 1051 -1164 63 -74 157 -181 208 -237 l93 -102 -38 -7 c-261 -45 -560 -117 -738 -177 -229 -78 -517 -211 -718 -330 -174 -105 -192 -121 -241 -217 -77 -151 -433 -963 -501 -1142 -16 -43 -22 -49 -69 -64 -28 -9 -112 -45 -187 -79 l-136 -62 -84 43 c-46 23 -128 59 -181 80 l-97 37 -72 176 c-122 300 -338 799 -408 946 -61 126 -73 144 -119 178 -87 66 -211 136 -397 227 -303 147 -537 234 -825 304 -128 31 -404 86 -432 86 -5 0 28 42 74 93 47 50 243 273 437 495 440 502 540 612 765 837 159 158 356 339 438 401 l26 21 -503 503 c-277 277 -506 502 -508 500 -5 -6 -53 -312 -66 -425 -39 -316 -49 -899 -22 -1252 l14 -183 -64 -68 c-35 -37 -111 -123 -169 -191 l-105 -124 -12 94 c-121 964 -69 1840 169 2853 l21 90 666 -670 c366 -369 731 -734 811 -811z m-1119 -2657 c96 -41 280 -122 409 -179 l235 -104 75 -149 c99 -195 269 -547 392 -809 88 -189 94 -205 60 -165 -377 452 -861 963 -1272 1343 -107 99 -204 188 -215 199 -12 12 11 4 61 -21 44 -21 159 -73 255 -115z m3803 92 c-272 -247 -672 -649 -1009 -1013 -131 -141 -386 -430 -438 -495 -37 -47 33 102 321 680 l227 455 170 78 c94 43 303 137 465 209 162 72 299 134 305 139 5 5 13 9 18 9 6 0 -21 -28 -59 -62z" />
+          <path
+            d="M3600 4972 c1 -4 71 -108 156 -232 85 -124 185 -268 221 -322 47 -70 72 -98 91 -103 52 -12 377 -137 388 -149 6 -6 91 -166 189 -356 97 -190 180 -349 185 -353 8 -10 -54 211 -186 653 -105 351 -139 425 -230 509 -102 93 -308 189 -656 307 -87 29 -158 50 -158 46z" />
+          <path
+            d="M6470 4920 c-96 -31 -227 -78 -290 -104 -357 -147 -440 -231 -533 -536 -64 -208 -237 -813 -234 -816 1 -2 84 156 182 351 l180 355 125 49 c69 27 165 61 213 77 l88 29 118 165 c133 185 333 481 329 485 -2 2 -82 -23 -178 -55z" />
+          <path
+            d="M4770 3059 c0 -3 23 -37 51 -74 29 -37 103 -140 166 -229 63 -88 118 -162 121 -163 10 -3 244 289 313 390 l58 84 -354 -1 c-195 -1 -355 -4 -355 -7z" />
+        </g>
       </svg>
     </div>
     <div class="loading-text">CodeCore</div>
@@ -831,8 +925,19 @@
     <div class="header-content">
       <div class="logo">
         <div class="logo-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          <svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="1024.000000pt" height="1024.000000pt"
+            viewBox="0 0 1024.000000 1024.000000" preserveAspectRatio="xMidYMid meet">
+
+            <g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+              <path
+                d="M0 5120 l0 -5120 5120 0 5120 0 0 5120 0 5120 -5120 0 -5120 0 0 -5120z m4470 1433 l145 -142 83 19 c212 47 565 52 792 12 64 -12 123 -24 131 -27 12 -4 240 221 820 805 l804 812 13 -44 c45 -157 131 -613 171 -913 87 -644 92 -1276 16 -1895 -25 -203 -14 -193 -103 -87 -42 51 -117 136 -166 190 l-89 99 12 141 c30 353 24 897 -14 1247 -17 149 -64 462 -71 470 -3 2 -231 -222 -508 -499 l-503 -503 116 -98 c64 -54 185 -164 270 -246 259 -250 468 -481 1051 -1164 63 -74 157 -181 208 -237 l93 -102 -38 -7 c-261 -45 -560 -117 -738 -177 -229 -78 -517 -211 -718 -330 -174 -105 -192 -121 -241 -217 -77 -151 -433 -963 -501 -1142 -16 -43 -22 -49 -69 -64 -28 -9 -112 -45 -187 -79 l-136 -62 -84 43 c-46 23 -128 59 -181 80 l-97 37 -72 176 c-122 300 -338 799 -408 946 -61 126 -73 144 -119 178 -87 66 -211 136 -397 227 -303 147 -537 234 -825 304 -128 31 -404 86 -432 86 -5 0 28 42 74 93 47 50 243 273 437 495 440 502 540 612 765 837 159 158 356 339 438 401 l26 21 -503 503 c-277 277 -506 502 -508 500 -5 -6 -53 -312 -66 -425 -39 -316 -49 -899 -22 -1252 l14 -183 -64 -68 c-35 -37 -111 -123 -169 -191 l-105 -124 -12 94 c-121 964 -69 1840 169 2853 l21 90 666 -670 c366 -369 731 -734 811 -811z m-1119 -2657 c96 -41 280 -122 409 -179 l235 -104 75 -149 c99 -195 269 -547 392 -809 88 -189 94 -205 60 -165 -377 452 -861 963 -1272 1343 -107 99 -204 188 -215 199 -12 12 11 4 61 -21 44 -21 159 -73 255 -115z m3803 92 c-272 -247 -672 -649 -1009 -1013 -131 -141 -386 -430 -438 -495 -37 -47 33 102 321 680 l227 455 170 78 c94 43 303 137 465 209 162 72 299 134 305 139 5 5 13 9 18 9 6 0 -21 -28 -59 -62z" />
+              <path
+                d="M3600 4972 c1 -4 71 -108 156 -232 85 -124 185 -268 221 -322 47 -70 72 -98 91 -103 52 -12 377 -137 388 -149 6 -6 91 -166 189 -356 97 -190 180 -349 185 -353 8 -10 -54 211 -186 653 -105 351 -139 425 -230 509 -102 93 -308 189 -656 307 -87 29 -158 50 -158 46z" />
+              <path
+                d="M6470 4920 c-96 -31 -227 -78 -290 -104 -357 -147 -440 -231 -533 -536 -64 -208 -237 -813 -234 -816 1 -2 84 156 182 351 l180 355 125 49 c69 27 165 61 213 77 l88 29 118 165 c133 185 333 481 329 485 -2 2 -82 -23 -178 -55z" />
+              <path
+                d="M4770 3059 c0 -3 23 -37 51 -74 29 -37 103 -140 166 -229 63 -88 118 -162 121 -163 10 -3 244 289 313 390 l58 84 -354 -1 c-195 -1 -355 -4 -355 -7z" />
+            </g>
           </svg>
         </div>
         <h1>CodeCore</h1>
@@ -840,31 +945,35 @@
       <div class="header-actions">
         <button class="btn-header btn-refresh" onclick="refreshProjects()" id="refreshBtn">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+            <path
+              d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
           </svg>
           Actualizar
         </button>
         <button class="btn-header" onclick="openSearchModal()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            <path
+              d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
           </svg>
           Buscar Carpetas
         </button>
         <button class="btn-header" onclick="openFolderModal()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10zm-8-4h2v2h2v-2h2v-2h-2v-2h-2v2h-2v2z"/>
+            <path
+              d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10zm-8-4h2v2h2v-2h2v-2h-2v-2h-2v2h-2v2z" />
           </svg>
           Crear Carpeta
         </button>
         <button class="btn-header" onclick="openCloneModal()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            <path
+              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
           </svg>
           Clonar Repo
         </button>
         <button class="btn-header btn-create" onclick="openProjectModal()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
           </svg>
           Nuevo Proyecto
         </button>
@@ -880,12 +989,12 @@
         <div class="carousel-controls">
           <button class="carousel-btn" id="prevBtn" onclick="prevPage()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
             </svg>
           </button>
           <button class="carousel-btn" id="nextBtn" onclick="nextPage()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
             </svg>
           </button>
         </div>
@@ -1092,14 +1201,14 @@
       const btn = document.getElementById('refreshBtn');
       btn.classList.add('refreshing');
       btn.disabled = true;
-      
+
       await loadProjects();
-      
+
       setTimeout(() => {
         btn.classList.remove('refreshing');
         btn.disabled = false;
       }, 500);
-      
+
       showNotification('✅ Lista actualizada');
     }
 
@@ -1152,7 +1261,7 @@
       event.preventDefault();
       const name = document.getElementById('projectName').value;
       const submitBtn = event.target.querySelector('.btn-submit');
-      
+
       submitBtn.disabled = true;
       submitBtn.textContent = 'Creando...';
 
@@ -1183,7 +1292,7 @@
       event.preventDefault();
       const name = document.getElementById('folderName').value;
       const submitBtn = event.target.querySelector('.btn-submit');
-      
+
       submitBtn.disabled = true;
       submitBtn.textContent = 'Creando...';
 
@@ -1215,7 +1324,7 @@
       const url = document.getElementById('repoUrl').value;
       const name = document.getElementById('repoName').value;
       const submitBtn = event.target.querySelector('.btn-submit');
-      
+
       submitBtn.disabled = true;
       submitBtn.textContent = 'Clonando...';
 
@@ -1246,7 +1355,7 @@
     async function searchFolders() {
       clearTimeout(searchTimeout);
       const query = document.getElementById('searchQuery').value;
-      
+
       if (query.length < 2) {
         document.getElementById('searchResults').innerHTML = '<p style="color: #a0a0a0; padding: 1rem;">Escribe al menos 2 caracteres...</p>';
         return;
@@ -1254,7 +1363,7 @@
 
       searchTimeout = setTimeout(async () => {
         document.getElementById('searchResults').innerHTML = '<p style="color: #a0a0a0; padding: 1rem;">Buscando...</p>';
-        
+
         try {
           const res = await fetch('http://localhost:8080/api/search-folders', {
             method: 'POST',
@@ -1264,7 +1373,7 @@
 
           const data = await res.json();
           const resultsDiv = document.getElementById('searchResults');
-          
+
           if (data.results && data.results.length > 0) {
             resultsDiv.innerHTML = data.results.map(path => `
               <div class="search-result-item" onclick="openPath('${path.replace(/\\/g, '\\\\')}')">${path}</div>
@@ -1288,10 +1397,10 @@
         const res = await fetch("http://localhost:8080/api/projects");
         const data = await res.json();
         allProjects = data;
-        
+
         hideFullscreenLoading();
         document.getElementById('project-count').textContent = `(${data.length})`;
-        
+
         currentPage = 0;
         renderCarousel();
       } catch (error) {
